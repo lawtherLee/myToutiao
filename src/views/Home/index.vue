@@ -16,7 +16,7 @@
     <!-- /导航栏 -->
 
     <!--    选项卡/内容区-->
-    <van-tabs v-model="active" class="channel-tabs" swipeable>
+    <van-tabs v-model="active" swipeable>
       <van-tab v-for="item in channels" :key="item.id" :title="item.name">
         <!--      文章详情-->
         <article-list/>
@@ -26,6 +26,7 @@
         <i class="toutiao toutiao-gengduo"></i>
       </template>
     </van-tabs>
+
     <!--/    选项卡/内容区-->
   </div>
 </template>
@@ -57,7 +58,8 @@ export default {
       try {
         const { data: { data } } = await getUserChannelsAPI()
         console.log(data)
-        this.channels = data
+        this.channels = data.channels
+        console.log(this.channels)
       } catch (e) {
         console.log(e)
       }
