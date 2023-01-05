@@ -14,24 +14,55 @@
       </template>
     </van-nav-bar>
     <!-- /导航栏 -->
+
+    <!--    选项卡/内容区-->
+    <van-tabs v-model="active" class="channel-tabs" swipeable>
+      <van-tab v-for="item in channels" :key="item.id" :title="item.name">
+        <!--      文章详情-->
+        <article-list/>
+      </van-tab>
+      <!--      汉堡-->
+      <template>
+        <i class="toutiao toutiao-gengduo"></i>
+      </template>
+    </van-tabs>
+    <!--/    选项卡/内容区-->
   </div>
 </template>
 
 <script>
+import ArticleList from '@/views/Home/components/ArticleList.vue'
+import { getUserChannelsAPI } from '@/api'
+
 export default {
   name: 'Home',
-  components: {},
+  components: { ArticleList },
   props: {},
   data () {
-    return {}
+    return {
+      active: 2,
+      channels: []
+    }
   },
   computed: {},
   watch: {},
   created () {
+    this.getChannelsData()
   },
   mounted () {
   },
-  methods: {}
+  methods: {
+    // 获取服务器数据
+    async getChannelsData () {
+      try {
+        const { data: { data } } = await getUserChannelsAPI()
+        console.log(data)
+        this.channels = data
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
 }
 </script>
 
@@ -42,7 +73,7 @@ export default {
   // inherit 继承
   // unset 不设置
   :deep(.van-nav-bar__title) {
-    max-width: inherit;
+    max-width: unset;
   }
 
   .van-button--default {
@@ -63,7 +94,7 @@ export default {
 
 /* tabs导航条样式 */
 :deep(.van-tabs__wrap) {
-  padding-right: 66px;
+  padding-right: 70px;
 
   .van-tabs__nav {
     padding-left: 0;
@@ -112,4 +143,5 @@ export default {
     background-image: url("~@/assets/images/gradient-gray-line.png");
   }
 }
+
 </style>
