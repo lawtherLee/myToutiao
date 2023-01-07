@@ -19,7 +19,7 @@
     <van-tabs v-model="active" swipeable>
       <van-tab v-for="item in channels" :key="item.id" :title="item.name">
         <!--      文章详情-->
-        <article-list/>
+        <article-list :id="item.id"/>
       </van-tab>
       <!--      汉堡-->
       <template>
@@ -42,7 +42,8 @@ export default {
   data () {
     return {
       active: 2,
-      channels: []
+      channels: [],
+      channel: {} // 文章内容
     }
   },
   computed: {},
@@ -57,7 +58,6 @@ export default {
     async getChannelsData () {
       try {
         const { data: { data } } = await getUserChannelsAPI()
-        console.log(data)
         this.channels = data.channels
         console.log(this.channels)
       } catch (e) {
