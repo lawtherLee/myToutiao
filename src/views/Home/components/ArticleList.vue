@@ -76,9 +76,15 @@ export default {
           this.finished = true
         }
       } catch (e) {
-        console.log(e)
-        this.loading = false // 关闭loading
         this.error = true // 开启错误提示
+        const status = e.response?.status
+        if (!e.response || status === 507) {
+          throw e
+        } else {
+          if (status === 400) throw new Error(e.response.data.message)
+        }
+      } finally {
+        this.loading = false // 关闭loading
       }
     }
   },
