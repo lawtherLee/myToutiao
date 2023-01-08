@@ -2,13 +2,16 @@
   <div>
     <van-cell-group class="article-list" inset>
       <van-cell v-if="article.cover.type === 0" :label="label" :title="article.title"/>
+
       <van-cell v-if="article.cover.type === 1" :label="label" :title="article.title">
         <van-image :src="article.cover.images[0]" height="100px" width="100px"/>
       </van-cell>
+
       <van-cell v-else :label="label" :title="article.title">
         <template #label>
-          <van-image v-for="(item,index) in article.cover.images" :key="index" :src="item" height="100" width="100"/>
-          <span>{{ label }}</span>
+          <van-image v-for="(item,index) in article.cover.images" :key="index" :src="item" height="100"
+                     style="margin-right: 7px" width="100"/>
+          <div>{{ label }}</div>
         </template>
       </van-cell>
     </van-cell-group>

@@ -65,7 +65,8 @@ export default {
           timestamp: this.timeStamp || Date.now()
         })
         console.log(data)
-        this.list.push(...data.results)
+        // this.list.push(...data.results)
+        this.list = data.results
         console.log(this.list)
         // LOADING状态结束
         this.loading = false

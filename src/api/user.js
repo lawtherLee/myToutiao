@@ -28,6 +28,6 @@ export const getSmsCodeAPI = mobile => request({
  */
 export const getUserinfoAPI = () => {
   return request({
-    url: '/v1_0/user/'
+    url: '/v1_0/user'
   })
 }

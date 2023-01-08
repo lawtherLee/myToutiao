@@ -11,7 +11,7 @@ const request = axios.create({
 request.interceptors.request.use(config => {
   const token = store.state.user.token
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+    config.headers.Authorization = `Bearer ${token.token}`
   }
   return config
 }, error => {
@@ -22,10 +22,11 @@ request.interceptors.response.use(response => {
   return response
 }, async error => {
   console.dir(error)
+  // 解决401
   if (error.response && error.response.status === 401) {
     // 检测是否有refreshToken
     const user = store.state.user
-    if (!user || !user.refresh_token) {
+    if (!user.token || !user.refresh_token) {
       await router.push('/login')
       return
     }

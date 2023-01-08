@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: JSON.parse(window.localStorage.getItem('userToken'))
+    user: JSON.parse(window.localStorage.getItem('userToken')) || {}
   },
   getters: {
     isLogin (state) {

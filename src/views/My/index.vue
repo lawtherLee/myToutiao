@@ -111,9 +111,9 @@ export default {
     // 获取用户信息
     async loadUserinfo () {
       try {
-        const { data } = await getUserinfoAPI()
+        const { data: { data } } = await getUserinfoAPI()
         console.log(data)
-        this.userinfo = data.data
+        this.userinfo = data
       } catch (e) {
         console.log('获取用户信息失败', e)
       }
