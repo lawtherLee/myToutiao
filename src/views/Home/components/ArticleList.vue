@@ -28,18 +28,19 @@
       finished-text="没有更多了"
       @load="onLoad"
     >
-      <van-cell-group class="article-list" inset>
-        <van-cell v-for="item in list" :key="item.art_id" :title="item.title"/>
-      </van-cell-group>
+
+      <article-item v-for="item in list" :key="item.art_id" :article="item"/>
     </van-list>
   </div>
 </template>
 
 <script>
 import { getArticleList } from '@/api/article'
+import ArticleItem from '@/views/Home/components/ArticleItem.vue'
 
 export default {
   name: 'ArticleList',
+  components: { ArticleItem },
   props: {
     id: {
       type: Number || String,
@@ -65,6 +66,7 @@ export default {
         })
         console.log(data)
         this.list.push(...data.results)
+        console.log(this.list)
         // LOADING状态结束
         this.loading = false
         // console.log(this.list)
@@ -95,6 +97,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.van-cell-group--inset {
+  margin: 10px;
+}
+
 .article-list {
   margin-top: 20px;
 
