@@ -2,12 +2,16 @@ import request from '@/utils/request'
 
 /**
  * 获取文章列表
- * @param params 频道id，时间戳，是否置顶
  * @returns {*}
+ * @param id 频道id
+ * @param timestamp 时间戳
  */
-export const getArticleList = params => {
+export const getArticleList = (id, timestamp) => {
   return request({
     url: '/v1_0/articles',
-    params
+    params: {
+      channel_id: id,
+      timestamp
+    }
   })
 }

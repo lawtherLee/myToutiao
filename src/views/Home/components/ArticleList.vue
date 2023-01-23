@@ -20,17 +20,20 @@
        + 在每次请求完毕后，需要手动将 loading 设置为 false，表示本次加载结束
        + 所有数据加载结束，finished 为 true，此时不会触发 load 事件
     -->
-    <van-list
-      v-model="loading"
-      :error.sync="error"
-      :finished="finished"
-      error-text="加载失败，请重试"
-      finished-text="没有更多了"
-      @load="onLoad"
-    >
+    <van-pull-refresh v-model="refreshingLoading" @refresh="getNextPage">
+      <van-list
+        v-model="loading"
+        :error.sync="error"
+        :finished="finished"
+        error-text="加载失败，请重试"
+        finished-text="----没有更多了----"
+        offset="100"
+        @load="getNextPage"
+      >
 
-      <article-item v-for="item in list" :key="item.art_id" :article="item"/>
-    </van-list>
+        <article-item v-for="item in list" :key="item.art_id" :article="item"/>
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 
@@ -49,7 +52,7 @@ export default {
   },
   data () {
     return {
-      onLoad: Function,
+      refreshingLoading: false,
       list: [],
       loading: false,
       finished: false,
@@ -60,21 +63,17 @@ export default {
   methods: {
     async onload () {
       try {
-        const { data: { data } } = await getArticleList({
-          channel_id: this.id,
-          timestamp: this.timeStamp || Date.now()
-        })
-        console.log(data)
-        // this.list.push(...data.results)
+        this.loading = true
+        const { data: { data } } = await getArticleList(this.id, +new Date())
         this.list = data.results
-        console.log(this.list)
-        // LOADING状态结束
         this.loading = false
         // console.log(this.list)
         // 判断是否结束
         if (data.results.length) {
+          // 保存下一页时间戳 用于分页
           this.timeStamp = data.pre_timestamp
-          // console.log(this.timeStamp)
+          // console.log('保存的时间戳', this.timeStamp)
+          console.log('保存了时间戳', this.timeStamp)
         } else {
           this.finished = true
         }
@@ -86,8 +85,32 @@ export default {
         } else {
           if (status === 400) throw new Error(e.response.data.message)
         }
+      }
+    },
+
+    // 滑动加载下一页
+    async getNextPage () {
+      try {
+        console.log(this.timeStamp)
+        const { data: { data } } = await getArticleList(this.id, this.timeStamp)
+        console.log(data)
+        // 如果没有数据直接显示底部文案
+        if (!data.pre_timestamp) this.finished = true
+        // 判断用户上滑还是下拉
+        if (this.refreshingLoading) {
+          this.list.unshift(...data.results)
+        } else {
+          this.list.push(...data.results)
+        }
+        // 更新时间戳
+        this.timeStamp = data.pre_timestamp
+      } catch (err) {
+        console.log(111)
+        console.log(err)
+        this.error = true
       } finally {
-        this.loading = false // 关闭loading
+        this.loading = false
+        this.refreshingLoading = false
       }
     }
   },
