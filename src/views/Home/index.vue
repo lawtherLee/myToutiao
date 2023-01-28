@@ -18,15 +18,16 @@
     <!--    选项卡/内容区-->
     <van-tabs v-model="active" swipeable>
       <van-tab v-for="item in channels" :key="item.id" :title="item.name">
-        <!--      文章详情-->
+        <!--      文章列表-->
         <article-list :id="item.id"/>
+        <span class="toutiao toutiao-gengduo" @click="isShowPopup = true"/>
       </van-tab>
-      <!--      汉堡-->
-      <template>
-        <i class="toutiao toutiao-gengduo"></i>
-      </template>
+      <!--      弹出层-->
+      <van-popup v-model="isShowPopup" :style="{height:'100%'}" close-icon-position="top-left" closeable
+                 position="bottom">
+        <popup-edit v-if="isShowPopup"/>
+      </van-popup>
     </van-tabs>
-
     <!--/    选项卡/内容区-->
   </div>
 </template>
@@ -34,13 +35,15 @@
 <script>
 import ArticleList from '@/views/Home/components/ArticleList.vue'
 import { getUserChannelsAPI } from '@/api'
+import PopupEdit from '@/views/Home/components/PopupEdit.vue'
 
 export default {
   name: 'Home',
-  components: { ArticleList },
+  components: { PopupEdit, ArticleList },
   props: {},
   data () {
     return {
+      isShowPopup: false,
       active: 2,
       channels: [],
       channel: {} // 文章内容
