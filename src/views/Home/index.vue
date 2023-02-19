@@ -22,10 +22,14 @@
         <article-list :id="item.id"/>
         <span class="toutiao toutiao-gengduo" @click="isShowPopup = true"/>
       </van-tab>
+
       <!--      弹出层-->
-      <van-popup v-model="isShowPopup" :style="{height:'100%'}" close-icon-position="top-left" closeable
+      <van-popup v-model="isShowPopup" :style="{height:'100%'}"
+                 close-icon-position="top-left" closeable
                  position="bottom">
-        <popup-edit v-if="isShowPopup"/>
+        <!--        弹出层内容-->
+        <popup-edit v-if="isShowPopup" :my-channels="channels" @del-channel="delChannel"
+                    @change-channel="[isShowPopup = false,active = $event]"/>
       </van-popup>
     </van-tabs>
     <!--/    选项卡/内容区-->
@@ -43,8 +47,8 @@ export default {
   props: {},
   data () {
     return {
-      isShowPopup: false,
-      active: 2,
+      isShowPopup: true,
+      active: 0,
       channels: [],
       channel: {} // 文章内容
     }
@@ -62,10 +66,14 @@ export default {
       try {
         const { data: { data } } = await getUserChannelsAPI()
         this.channels = data.channels
-        console.log(this.channels)
+        // console.log(this.channels)
       } catch (e) {
         console.log(e)
       }
+    },
+    // 删除频道
+    delChannel (id) {
+      console.log(id)
     }
   }
 }
