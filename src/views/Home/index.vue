@@ -88,11 +88,18 @@ export default {
       try {
         if (this.isLogin) {
           console.log('登录了')
-          const res = await addChannelAPI(e.id, this.channels.length)
-          console.log(res)
+          await addChannelAPI(e.id, this.channels.length)
+        } else {
+          this.SET_MY_CHANNEL([...this.channels, e])
         }
+        this.channels.push(e)
+        this.$toast.success('添加频道成功')
       } catch (err) {
-        console.log(err)
+        if (err.response && err.response.status === 401) {
+          this.$toast.fail('请登录')
+        } else {
+          throw err
+        }
       }
     }
   }
