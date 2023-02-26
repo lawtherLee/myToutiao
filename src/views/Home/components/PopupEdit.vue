@@ -72,9 +72,8 @@ export default {
       this.allChannels = data.channels
       // console.log(this.allChannels)
     },
-
+    // 编辑频道
     handleChannels ({ id, name }, index) {
-      // console.log(name)
       if (this.isEdit && name !== '推荐') {
         this.$emit('del-channel', id)
       } else {

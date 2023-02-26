@@ -33,3 +33,14 @@ export const addChannelAPI = (id, seq) => {
     }
   })
 }
+/**
+ * 删除频道
+ * @param {Number|String} id 频道id
+ * @returns Promise
+ */
+export const delChannelAPI = (id) => {
+  return request({
+    url: `/v1_0/user/channels/${id}`,
+    method: 'DELETE'
+  })
+}

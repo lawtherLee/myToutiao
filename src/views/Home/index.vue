@@ -41,7 +41,7 @@
 
 <script>
 import ArticleList from '@/views/Home/components/ArticleList.vue'
-import { addChannelAPI, getUserChannelsAPI } from '@/api'
+import { addChannelAPI, delChannelAPI, getUserChannelsAPI } from '@/api'
 import PopupEdit from '@/views/Home/components/PopupEdit.vue'
 import { mapGetters, mapMutations } from 'vuex'
 
@@ -53,8 +53,7 @@ export default {
     return {
       isShowPopup: true,
       active: 0,
-      channels: [],
-      channel: {} // 文章内容
+      channels: []
     }
   },
   computed: {
@@ -79,8 +78,27 @@ export default {
       }
     },
     // 删除频道
-    delChannel (id) {
-      console.log(id)
+    async delChannel (id) {
+      try {
+        const newChannels = (this.channels = this.channels.filter(item =>
+          item.id !== id
+        ))
+        // 1.发请求删除
+        if (this.isLogin) {
+          await delChannelAPI(id)
+        } else {
+          this.SET_MY_CHANNEL(newChannels)
+        }
+        // 2.视图层删除
+        // this.channels = newChannels
+        this.$toast.success('删除频道成功')
+      } catch (err) {
+        if (err.response && err.response.status === 401) {
+          this.$toast.fail('请登录')
+        } else {
+          throw err
+        }
+      }
     },
     // 添加频道
     async addChannel (e) {
