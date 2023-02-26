@@ -61,20 +61,39 @@ export default {
   },
   watch: {},
   created () {
-    this.getChannelsData()
+    this.initChannels()
   },
   mounted () {
   },
   methods: {
     ...mapMutations(['SET_MY_CHANNEL']),
+    // 初始化channels
+    initChannels () {
+      // 如果登录了 获取用户自己的频道
+      if (this.isLogin) {
+        this.getChannelsData()
+      } else {
+        // 如果未登录，本地有数据 用本地数据，没有在发请求获取默认数据
+        const defaultChannels = this.$store.state.myChannels
+        if (defaultChannels.length === 0) {
+          this.getChannelsData()
+        } else {
+          this.channels = defaultChannels
+        }
+      }
+    },
     // 获取服务器数据
     async getChannelsData () {
       try {
         const { data: { data } } = await getUserChannelsAPI()
         this.channels = data.channels
         // console.log(this.channels)
-      } catch (e) {
-        console.log(e)
+      } catch (err) {
+        if (!err.response) {
+          throw err
+        } else {
+          err.response.status === 507 && this.$toast.fail('服务端异常请刷新')
+        }
       }
     },
     // 删除频道
