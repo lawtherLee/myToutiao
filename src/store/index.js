@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: JSON.parse(window.localStorage.getItem('userToken'))
+    user: JSON.parse(window.localStorage.getItem('userToken')) || {},
+    myChannels: []
   },
   getters: {
     isLogin (state) {
@@ -14,8 +15,11 @@ export default new Vuex.Store({
   },
   mutations: {
     SET_TOKEN (state, payload) {
-      state.user.token = payload
+      // state.user = payload
       window.localStorage.setItem('userToken', JSON.stringify(payload))
+    },
+    SET_MY_CHANNEL (state, channels) {
+      state.myChannels = channels
     }
   },
   actions: {},

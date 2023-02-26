@@ -16,15 +16,24 @@
     <!-- /导航栏 -->
 
     <!--    选项卡/内容区-->
-    <van-tabs v-model="active" class="channel-tabs" swipeable>
+    <van-tabs v-model="active" swipeable>
       <van-tab v-for="item in channels" :key="item.id" :title="item.name">
-        <!--      文章详情-->
-        <article-list/>
+        <!--      文章列表-->
+        <article-list :id="item.id"/>
+        <span class="toutiao toutiao-gengduo" @click="isShowPopup = true"/>
       </van-tab>
-      <!--      汉堡-->
-      <template>
-        <i class="toutiao toutiao-gengduo"></i>
-      </template>
+
+      <!--      弹出层-->
+      <van-popup v-model="isShowPopup" :style="{height:'100%'}"
+                 close-icon-position="top-left" closeable
+                 position="bottom">
+        <!--        弹出层内容-->
+        <popup-edit v-if="isShowPopup"
+                    :my-channels="channels"
+                    @del-channel="delChannel"
+                    @change-channel="[isShowPopup = false,active = $event]"
+                    @add-channel="addChannel"/>
+      </van-popup>
     </van-tabs>
     <!--/    选项卡/内容区-->
   </div>
@@ -32,19 +41,25 @@
 
 <script>
 import ArticleList from '@/views/Home/components/ArticleList.vue'
-import { getUserChannelsAPI } from '@/api'
+import { addChannelAPI, getUserChannelsAPI } from '@/api'
+import PopupEdit from '@/views/Home/components/PopupEdit.vue'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'Home',
-  components: { ArticleList },
+  components: { PopupEdit, ArticleList },
   props: {},
   data () {
     return {
-      active: 2,
-      channels: []
+      isShowPopup: true,
+      active: 0,
+      channels: [],
+      channel: {} // 文章内容
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['isLogin'])
+  },
   watch: {},
   created () {
     this.getChannelsData()
@@ -52,14 +67,39 @@ export default {
   mounted () {
   },
   methods: {
+    ...mapMutations(['SET_MY_CHANNEL']),
     // 获取服务器数据
     async getChannelsData () {
       try {
         const { data: { data } } = await getUserChannelsAPI()
-        console.log(data)
-        this.channels = data
+        this.channels = data.channels
+        // console.log(this.channels)
       } catch (e) {
         console.log(e)
+      }
+    },
+    // 删除频道
+    delChannel (id) {
+      console.log(id)
+    },
+    // 添加频道
+    async addChannel (e) {
+      // this.channels.push(e)
+      try {
+        if (this.isLogin) {
+          console.log('登录了')
+          await addChannelAPI(e.id, this.channels.length)
+        } else {
+          this.SET_MY_CHANNEL([...this.channels, e])
+        }
+        this.channels.push(e)
+        this.$toast.success('添加频道成功')
+      } catch (err) {
+        if (err.response && err.response.status === 401) {
+          this.$toast.fail('请登录')
+        } else {
+          throw err
+        }
       }
     }
   }

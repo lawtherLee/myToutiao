@@ -101,7 +101,7 @@ export default {
         await this.$router.push('/my')
       } catch (err) {
         console.log('登录失败', err)
-        if (err.response.status === 400) {
+        if (err.response?.status === 400) {
           Toast.fail('手机号或验证码错误')
         } else {
           Toast.fail('登录失败')
@@ -121,7 +121,7 @@ export default {
         this.$toast('发送成功')
       } catch (err) {
         this.isCountDownShow = false
-        if (err.response.status === 429) {
+        if (err.response?.status === 429) {
           this.$toast('发送太频繁了')
         } else {
           this.$toast('发送失败')

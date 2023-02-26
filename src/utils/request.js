@@ -22,10 +22,11 @@ request.interceptors.response.use(response => {
   return response
 }, async error => {
   console.dir(error)
+  // 解决401
   if (error.response && error.response.status === 401) {
     // 检测是否有refreshToken
     const user = store.state.user
-    if (!user || !user.refresh_token) {
+    if (!user.token || !user.refresh_token) {
       await router.push('/login')
       return
     }
