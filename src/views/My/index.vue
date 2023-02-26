@@ -88,9 +88,11 @@ export default {
     ...mapGetters({ isToken: 'isLogin' })
   },
   watch: {},
-  created () {
+  async created () {
+    console.log('my-created')
     if (this.isToken) {
-      this.loadUserinfo()
+      console.log('获取用户信息')
+      await this.loadUserinfo()
     }
   },
   mounted () {
@@ -111,6 +113,7 @@ export default {
     // 获取用户信息
     async loadUserinfo () {
       try {
+        console.log('loadUserInfo')
         const { data: { data } } = await getUserinfoAPI()
         console.log(data)
         this.userinfo = data

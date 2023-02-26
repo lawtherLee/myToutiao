@@ -28,8 +28,11 @@
                  close-icon-position="top-left" closeable
                  position="bottom">
         <!--        弹出层内容-->
-        <popup-edit v-if="isShowPopup" :my-channels="channels" @del-channel="delChannel"
-                    @change-channel="[isShowPopup = false,active = $event]"/>
+        <popup-edit v-if="isShowPopup"
+                    :my-channels="channels"
+                    @del-channel="delChannel"
+                    @change-channel="[isShowPopup = false,active = $event]"
+                    @add-channel="addChannel"/>
       </van-popup>
     </van-tabs>
     <!--/    选项卡/内容区-->
@@ -38,8 +41,9 @@
 
 <script>
 import ArticleList from '@/views/Home/components/ArticleList.vue'
-import { getUserChannelsAPI } from '@/api'
+import { addChannelAPI, getUserChannelsAPI } from '@/api'
 import PopupEdit from '@/views/Home/components/PopupEdit.vue'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'Home',
@@ -53,7 +57,9 @@ export default {
       channel: {} // 文章内容
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['isLogin'])
+  },
   watch: {},
   created () {
     this.getChannelsData()
@@ -61,6 +67,7 @@ export default {
   mounted () {
   },
   methods: {
+    ...mapMutations(['SET_MY_CHANNEL']),
     // 获取服务器数据
     async getChannelsData () {
       try {
@@ -74,6 +81,19 @@ export default {
     // 删除频道
     delChannel (id) {
       console.log(id)
+    },
+    // 添加频道
+    async addChannel (e) {
+      // this.channels.push(e)
+      try {
+        if (this.isLogin) {
+          console.log('登录了')
+          const res = await addChannelAPI(e.id, this.channels.length)
+          console.log(res)
+        }
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
