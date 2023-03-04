@@ -51,7 +51,7 @@ export default {
   props: {},
   data () {
     return {
-      isShowPopup: true,
+      isShowPopup: false,
       active: 0,
       channels: []
     }
