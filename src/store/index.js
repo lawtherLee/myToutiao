@@ -1,12 +1,22 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  plugins: [
+    createPersistedState({
+      key: 'TOUTIAO',
+      reducer ({ histories }) {
+        return { histories }
+      }
+    })
+  ],
   state: {
     user: JSON.parse(window.localStorage.getItem('userToken')) || {},
-    myChannels: []
+    myChannels: [],
+    histories: []
   },
   getters: {
     isLogin (state) {
@@ -20,6 +30,10 @@ export default new Vuex.Store({
     },
     SET_MY_CHANNEL (state, channels) {
       state.myChannels = channels
+    },
+    // 搜索历史
+    SET_HISTORIES (state, histories) {
+      state.histories = histories
     }
   },
   actions: {},
